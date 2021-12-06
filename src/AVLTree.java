@@ -36,11 +36,17 @@ public class AVLTree {
     private IAVLNode treePosition(IAVLNode nodeX, int k) {
         //needs to be implemented
         IAVLNode posNode = null;
-        while (nodeX.isRealNode() && nodeX!=EXTERNALNODE && nodeX!=null){
+        while (nodeX!=EXTERNALNODE && nodeX!=null){
             posNode=nodeX;
-            if (k==nodeX.getKey()){return nodeX;}
-            else if(k<nodeX.getKey()){ nodeX=nodeX.getLeft();}
-            else {nodeX=nodeX.getRight();}
+            if (k==nodeX.getKey()){
+                return nodeX;
+            }
+            if(k<nodeX.getKey()){
+                nodeX=nodeX.getLeft();
+            }
+            else {
+                nodeX=nodeX.getRight();
+            }
         }
         return posNode;
     }
@@ -78,11 +84,9 @@ public class AVLTree {
         if (node != null && node.getParent() != null) {
             int[] rankDiffNode = rankDifference(node);
             int[] rankDiffParent = rankDifference(node.getParent());
-            if (((Arrays.equals(rankDiffNode, new int[]{1, 1}) ||
-                    (Arrays.equals(rankDiffNode, new int[]{2, 1})) ||
-                    (Arrays.equals(rankDiffNode, new int[]{1, 2})))
-                    && (Arrays.equals(rankDiffParent, new int[]{1, 0}) ||
-                    (Arrays.equals(rankDiffParent, new int[]{0, 1}))))) {
+            if ((Arrays.equals(rankDiffParent, new int[]{1, 0}) ||
+                    (Arrays.equals(rankDiffParent, new int[]{0, 1})))) {
+                //promote parent + return 1+rebalanceInsert--> problem might moved up
                 return "case1";
             }
             //single left rotation & demote(z)--> re-balancing completed return +2
@@ -1039,7 +1043,6 @@ public class AVLTree {
     //    things to implement
     private void singleRightRotation(AVLTree.IAVLNode leftSonX) {
 
-
         AVLTree.IAVLNode parent = leftSonX.getParent();
         AVLTree.IAVLNode RChild = leftSonX.getRight();
 
@@ -1054,32 +1057,32 @@ public class AVLTree {
 
     }
 
-    private void singleLeftRotation(AVLTree.IAVLNode rightSonX) {
-        AVLTree.IAVLNode parent = rightSonX.getParent();
-        AVLTree.IAVLNode LChild = rightSonX.getLeft();
+    private void singleLeftRotation(IAVLNode parent) {
+        IAVLNode parentOfParent = parent.getParent();
+        IAVLNode RChild = parent.getRight();
+        IAVLNode RLChild = parent.getRight().getLeft(); //a
 
-        replacePointers(rightSonX, parent);
+        replacePointers(parent, parentOfParent);
 
-        rightSonX.setLeft(rightSonX.getParent());
-        rightSonX.setParent(parent.getParent());
-
-        parent.setParent(rightSonX);
-        parent.setRight(LChild);
-        LChild.setParent(parent);
+        RChild.setLeft(parent);
+        parent.setParent(RChild);
+        parent.setRight(RLChild);
 
     }
 
-    private void replacePointers(AVLTree.IAVLNode rightSonX, AVLTree.IAVLNode parent) {
+    private void replacePointers(IAVLNode son, IAVLNode parent) {
         if(parent.getParent() == null){
-            this.root = rightSonX;
+            this.root = son;
+            son.setParent(null);
         }
-        if(parent.getParent() != null){
+        else{
             if(parent.getParent().getRight() == parent){
-                parent.getParent().setRight(rightSonX);
+                parent.getParent().setRight(son);
             }
             else {
-                parent.getParent().setLeft(rightSonX);
+                parent.getParent().setLeft(son);
             }
+            son.setParent(parent.getParent());
         }
     }
 
