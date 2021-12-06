@@ -164,6 +164,7 @@ public class AVLTree {
                 } else {
                     whereToInsertNode.setRight(currNode);
                 }
+//                promote(whereToInsertNode);
             }
             else{ // whereToInsertNode is an Unary node
                 if (whereToInsertNode.getRight().isRealNode() && !whereToInsertNode.getLeft().isRealNode()){
@@ -183,7 +184,7 @@ public class AVLTree {
                 this.maxNode=currNode;
             }
         }
-        reHeight(whereToInsertNode,1);//todo-change name
+//        reHeight(whereToInsertNode,1);//todo-change name
         return rebalanceInsert(whereToInsertNode);// todo- i changed it to currNode parent-check
     }
     private void reHeight(IAVLNode parent, int i) {
@@ -201,7 +202,7 @@ public class AVLTree {
 //            return rightNode.getHeight();
 //        }
 //    }
-    private int rebalanceInsert(IAVLNode node) {
+    private int rebalanceInsert(IAVLNode parentOfInsertedNode) {
         // this is where the rebalancing proccess is done
         // return the number of operation needed in order to maintain the AVL invariants.
         int cnt=0;
@@ -210,85 +211,87 @@ public class AVLTree {
 //        }
 //        if(isRebalancingInSertDone(node)) {
 //            //when the tree is balanced when we call the method
-//            promote(node);//todo-check that
-//            node.setSize(node.getSize()+1);
-//            cnt++;
+        if (parentOfInsertedNode.isLeaf()) {
+            promote(parentOfInsertedNode);//todo-check that
+            //            node.setSize(node.getSize()+1);
+            cnt++;
+        }
 //            //reSize(node,1);// todo-check if this is needed or only local change in hieght
 //            //updateHeight(node); //todo-check if needed here -05.12
 //            // return 0;//todo-check that
 
-            if (node.getParent() != null) {
+            if (parentOfInsertedNode.getParent() != null) {
                 // in order to check rank diff between node and his parent we need to make sure its not null
                 //}
                 // check insertion cases
-                IAVLNode parent = node.getParent();
-                String caseName = insertionCase(node);
+                IAVLNode parentOfParent = parentOfInsertedNode.getParent();
+                String caseName = insertionCase(parentOfInsertedNode);
                 switch (caseName) {
                     case "case1":
                         // problem might moved up if so fix that- moving upward recursively
-                        updateSize(node);
-                        promote(parent);
+                        updateSize(parentOfInsertedNode);
+                        promote(parentOfParent);
                         cnt++;
-                        cnt+= rebalanceInsert(parent);
+                        cnt+= rebalanceInsert(parentOfParent);
                     case "case2left":
                         //single right rotation & demote(z)--> re-balancing completed
-                        singleRightRotation(node);
-                        updateSize(parent); //z- right child now
-                        updateSize(node);//x-parent now
-                        demote(parent);
+                        singleRightRotation(parentOfInsertedNode);
+                        updateSize(parentOfParent); //z- right child now
+                        updateSize(parentOfInsertedNode);//x-parent now
+                        demote(parentOfParent);
                         cnt+=2;
-                        cnt+= rebalanceInsert(parent);
+                        cnt+= rebalanceInsert(parentOfParent);
                     case "case3right":
                         //single left rotation & demote(z)--> re-balancing completed
-                        singleLeftRotation(node);
-                        updateSize(parent); //z- left child now
-                        updateSize(node);//x-parent now
-                        demote(parent);
+                        singleLeftRotation(parentOfInsertedNode);
+                        updateSize(parentOfParent); //z- left child now
+                        updateSize(parentOfInsertedNode);//x-parent now
+                        demote(parentOfParent);
                         cnt+=2;
                     case "case2right":
                         //double rotation: first right rotation (a-x) then left rotation (a-z)
                         // & demote(x) ,demote(z), promote(a) & return +5
-                        IAVLNode leftSonA = node.getLeft();
-                        singleRightRotation(node);
+                        IAVLNode leftSonA = parentOfInsertedNode.getLeft();
+                        singleRightRotation(parentOfInsertedNode);
                         //after right rotation leftSonA become right son of parent
-                        singleLeftRotation(node);
-                        updateSize(parent);//z
-                        updateSize(node);//x
+                        singleLeftRotation(parentOfInsertedNode);
+                        updateSize(parentOfParent);//z
+                        updateSize(parentOfInsertedNode);//x
                         updateSize(leftSonA);//a
-                        demote(parent);
-                        demote(node);
+                        demote(parentOfParent);
+                        demote(parentOfInsertedNode);
                         promote(leftSonA);
                         cnt+=5;
                     case "case3left":
                         //double rotation: first left rotation (x-b) then left rotation (b-z)
                         // & demote(x) ,demote(z), promote(b) & return +5
-                        IAVLNode rightSonB = node.getRight();
-                        singleLeftRotation(node);
+                        IAVLNode rightSonB = parentOfInsertedNode.getRight();
+                        singleLeftRotation(parentOfInsertedNode);
                         // after left rotation leftSonB become left son of parent
-                        singleRightRotation(node);
-                        updateSize(parent);//z
-                        updateSize(node);//x
+                        singleRightRotation(parentOfInsertedNode);
+                        updateSize(parentOfParent);//z
+                        updateSize(parentOfInsertedNode);//x
                         updateSize(rightSonB);//b
-                        demote(parent);
-                        demote(node);
+                        demote(parentOfParent);
+                        demote(parentOfInsertedNode);
                         promote(rightSonB);
                         cnt+= 5;
                     case "caseJoinLeft":
                         // when the subtree of x (after join) is a left subtree to nodeC
                         // sol: right rotation x-c & promote(x)
-                        singleRightRotation(node); // node is the root of joined subtree of x
-                        updateSize(parent);//c
-                        updateSize(node);//x
-                        promote(node);
+                        singleRightRotation(parentOfInsertedNode); // node is the root of joined subtree of x
+                        updateSize(parentOfParent);//c
+                        updateSize(parentOfInsertedNode);//x
+                        promote(parentOfInsertedNode);
                         cnt+=2;
                     case "caseJoinRight":
                         // special case for join
                         // when the subtree of x (after join) is a right subtree to nodeC
                         // sol: left rotation x-c & promote(x)
-                        singleLeftRotation(node);// node is the root of joined subtree of x
-                        updateSize(parent);//c
-                        updateSize(node);//x
-                        promote(node);
+                        singleLeftRotation(parentOfInsertedNode);// node is the root of joined subtree of x
+                        updateSize(parentOfParent);//c
+                        updateSize(parentOfInsertedNode);//x
+                        promote(parentOfInsertedNode);
                         cnt+=2;
 
                 }
