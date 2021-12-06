@@ -227,14 +227,14 @@ public class AVLTree {
                     return 0; //the tree is a valid tree no need to rebalance it.
                 case "case2left":
                     //single right rotation & demote(z)--> re-balancing completed
-                    singleRightRotation(parent, node);
+                    singleRightRotation(node);
                     updateSize(parent); //z- right child now
                     updateSize(node);//x-parent now
                     demote(parent);
                     return 2;
                 case "case3right":
                     //single left rotation & demote(z)--> re-balancing completed
-                    singleLeftRotation(parent, node);
+                    singleLeftRotation(node);
                     updateSize(parent); //z- left child now
                     updateSize(node);//x-parent now
                     demote(parent);
@@ -243,9 +243,9 @@ public class AVLTree {
                     //double rotation: first right rotation (a-x) then left rotation (a-z)
                     // & demote(x) ,demote(z), promote(a) & return +5
                     IAVLNode leftSonA = node.getLeft();
-                    singleRightRotation(node, leftSonA);
+                    singleRightRotation(leftSonA);
                     //after right rotation leftSonA become right son of parent
-                    singleLeftRotation(parent, leftSonA);
+                    singleLeftRotation(leftSonA);
                     updateSize(parent);//z
                     updateSize(node);//x
                     updateSize(leftSonA);//a
@@ -257,9 +257,9 @@ public class AVLTree {
                     //double rotation: first left rotation (x-b) then left rotation (b-z)
                     // & demote(x) ,demote(z), promote(b) & return +5
                     IAVLNode rightSonB = node.getRight();
-                    singleLeftRotation(node, rightSonB);
+                    singleLeftRotation(rightSonB);
                     // after left rotation leftSonB become left son of parent
-                    singleRightRotation(parent, rightSonB);
+                    singleRightRotation(rightSonB);
                     updateSize(parent);//z
                     updateSize(node);//x
                     updateSize(rightSonB);//b
@@ -270,7 +270,7 @@ public class AVLTree {
                 case "caseJoinLeft":
                     // when the subtree of x (after join) is a left subtree to nodeC
                     // sol: right rotation x-c & promote(x)
-                    singleRightRotation(parent,node); // node is the root of joined subtree of x
+                    singleRightRotation(node); // node is the root of joined subtree of x
                     updateSize(parent);//c
                     updateSize(node);//x
                     promote(node);
@@ -279,7 +279,7 @@ public class AVLTree {
                     // special case for join
                     // when the subtree of x (after join) is a right subtree to nodeC
                     // sol: left rotation x-c & promote(x)
-                    singleLeftRotation(parent,node);// node is the root of joined subtree of x
+                    singleLeftRotation(node);// node is the root of joined subtree of x
                     updateSize(parent);//c
                     updateSize(node);//x
                     promote(node);
@@ -445,7 +445,7 @@ public class AVLTree {
             this.minNode = findSuccessor(minNode);// TODO: 06/12/2021 chack min 
         }
         if (nodeToDelete.getKey() == this.maxNode.getKey()){
-            this.maxNode = findPredecessor(maxNode);// TODO: 06/12/2021 change max 
+            this.maxNode = findPredecessor(maxNode);// TODO: 06/12/2021 change max
         }
         this.size--; // TODO: 06/12/2021 check size 
         return counter;
@@ -599,7 +599,7 @@ public class AVLTree {
                 return 1;
             case ("case2right"):
                 IAVLNode right = parent.getRight();
-                singleLeftRotation(parent, right);
+                singleLeftRotation(right);
                 promote(right);
                 demote(parent);
                 updateSize(parent);
@@ -607,7 +607,7 @@ public class AVLTree {
                 return 3 + rebalanceDelete(parent.getParent());
             case ("case2left"):
                 IAVLNode left = parent.getLeft();
-                singleRightRotation(parent, left);
+                singleRightRotation(left);
                 promote(left);
                 demote(parent);
                 updateSize(parent);
@@ -615,7 +615,7 @@ public class AVLTree {
                 return 3 + rebalanceDelete(parent.getParent());
             case ("case3right"):
                 IAVLNode rightSon = parent.getRight();
-                singleLeftRotation(parent, parent.getRight());
+                singleLeftRotation(rightSon);
                 demote(parent); //z
                 demote(parent); //z
                 updateSize(parent); //z
@@ -623,7 +623,7 @@ public class AVLTree {
                 return 3 + rebalanceDelete(parent.getParent());
             case ("case3left"):
                 IAVLNode LeftSon = parent.getLeft();
-                singleRightRotation(parent, parent.getLeft());
+                singleRightRotation(LeftSon);
                 demote(parent); //z
                 demote(parent); //z
                 updateSize(parent); //z
@@ -632,8 +632,8 @@ public class AVLTree {
             case ("case4right"):
                 IAVLNode RightSon = parent.getRight(); //y
                 IAVLNode RightLeftSon = RightSon.getLeft(); //a
-                singleRightRotation(RightSon, RightLeftSon); //y-a
-                singleLeftRotation(parent, RightLeftSon); //a-z
+                singleRightRotation(RightLeftSon); //y-a
+                singleLeftRotation(RightLeftSon); //a-z
                 demote(parent); //z
                 demote(parent); //z
                 demote(RightSon); //y
@@ -645,8 +645,8 @@ public class AVLTree {
             case ("case4left"):
                 IAVLNode Lson = parent.getLeft(); //y
                 IAVLNode LRSon = Lson.getRight(); //a
-                singleLeftRotation(Lson, LRSon); //y-a
-                singleRightRotation(parent, LRSon); //a-z
+                singleLeftRotation(LRSon); //y-a
+                singleRightRotation(LRSon); //a-z
                 demote(parent); //z
                 demote(parent); //z
                 demote(Lson); //y
@@ -1066,30 +1066,60 @@ public class AVLTree {
 
 
     //    things to implement
-    private void singleRightRotation(IAVLNode node, IAVLNode leftSonX) {
-        IAVLNode parent=node.getParent();
-        //todo-take care of rotations
-        IAVLNode rightSonb = leftSonX.getRight();
-        node.setParent(leftSonX);
-        leftSonX.setRight(node);
-        node.setLeft(rightSonb);
+    private void singleRightRotation(IAVLNode leftSonX) {
+//        IAVLNode parent=node.getParent();
+//        //todo-take care of rotations
+//        IAVLNode rightSonb = leftSonX.getRight();
+//        node.setParent(leftSonX);
+//        leftSonX.setRight(node);
+//        node.setLeft(rightSonb);
+
+        IAVLNode parent = leftSonX.getParent();
+        IAVLNode RChild = leftSonX.getRight();
+
+        replacePointers(leftSonX, parent);
+
+        leftSonX.setRight(leftSonX.getParent());
+        leftSonX.setParent(leftSonX.getParent());
+
+        parent.setParent(leftSonX);
+        parent.setLeft(RChild);
+        RChild.setParent(parent);
 
     }
 
-    private void singleLeftRotation(IAVLNode node, IAVLNode rightSonX) {
-        IAVLNode leftSonb = rightSonX.getLeft();
-        node.setParent(rightSonX);
-        node.setRight(leftSonb);
-        rightSonX.setLeft(node);
+    private void singleLeftRotation(IAVLNode rightSonX) {
+        IAVLNode parent = rightSonX.getParent();
+        IAVLNode LChild = rightSonX.getLeft();
 
+        replacePointers(rightSonX, parent);
+
+        rightSonX.setLeft(rightSonX.getParent());
+        rightSonX.setParent(parent.getParent());
+
+        parent.setParent(rightSonX);
+        parent.setRight(LChild);
+        LChild.setParent(parent);
+
+    }
+
+    private void replacePointers(IAVLNode rightSonX, IAVLNode parent) {
+        if(parent.getParent() == null){
+            this.root = rightSonX;
+        }
+        if(parent.getParent() != null){
+            if(parent.getParent().getRight() == parent){
+                parent.getParent().setRight(rightSonX);
+            }
+            else {
+                parent.getParent().setLeft(rightSonX);
+            }
+        }
     }
 
     private boolean isRebalancingInSertDone(IAVLNode parent){
-        if(parent.getHeight()-parent.getLeft().getHeight()==1 && parent.getHeight()-parent.getRight().getHeight()==1){
-            //case in which the rebalancing is not done.
-            return false;
-        }
-        return true;
+        //case in which the rebalancing is not done.
+        return parent.getHeight() - parent.getLeft().getHeight() != 1 || parent.getHeight() - parent.getRight().getHeight() != 1;
     }
     //todo-added print funcionality is here -delete later
 
