@@ -78,16 +78,12 @@ public class AVLTree {
         if (node != null && node.getParent() != null) {
             int[] rankDiffNode = rankDifference(node);
             int[] rankDiffParent = rankDifference(node.getParent());
-            if ((Arrays.equals(rankDiffParent, new int[]{1, 0}) ||
-                    (Arrays.equals(rankDiffParent, new int[]{0, 1})))) {
-                //promote parent + return 1+rebalanceInsert--> problem might moved up
+            if (((Arrays.equals(rankDiffNode, new int[]{1, 1}) ||
+                    (Arrays.equals(rankDiffNode, new int[]{2, 1})) ||
+                    (Arrays.equals(rankDiffNode, new int[]{1, 2})))
+                    && (Arrays.equals(rankDiffParent, new int[]{1, 0}) ||
+                    (Arrays.equals(rankDiffParent, new int[]{0, 1}))))) {
                 return "case1";
-            }
-            // this ia a valid tree--> no need to continue:  return 0
-            else if (((Arrays.equals(rankDiffNode, new int[]{1, 1}) // after insertion it's Unary
-                    && (Arrays.equals(rankDiffParent, new int[]{1, 2}) ||
-                    (Arrays.equals(rankDiffParent, new int[]{2, 1})))))) {
-                return "caseB";
             }
             //single left rotation & demote(z)--> re-balancing completed return +2
             else if (Arrays.equals(rankDiffNode, new int[]{1, 2})
@@ -145,11 +141,11 @@ public class AVLTree {
             this.root = firstNode;
             this.minNode=firstNode;
             this.maxNode=firstNode;
-            this.size++; // TODO: 06/12/2021 added size to tree 
             return 0;
         }
         IAVLNode whereToInsertNode = treePosition(this.root, k); // comment that O(logn)
         int keyLastPos=whereToInsertNode.getKey();
+        // TODO: 04/12/2021 create constructor
         IAVLNode currNode = new AVLNode(k, i, EXTERNALNODE, EXTERNALNODE, 0,1);
         if (keyLastPos == k) // if the node exists in the tree
             return -1;
@@ -164,23 +160,24 @@ public class AVLTree {
                 }
             }
             else{ // whereToInsertNode is an Unary node
-                if (whereToInsertNode.getLeft()==null &&whereToInsertNode.getRight()!=null){
+                if (whereToInsertNode.getRight().isRealNode() && !whereToInsertNode.getLeft().isRealNode()){
                     // only right son
                     whereToInsertNode.setLeft(currNode);}
-                else { whereToInsertNode.setRight(currNode);
+                else {
+                    whereToInsertNode.setRight(currNode);
                 }
             }
             //maintaining fields
-            this.size++; // TODO: 06/12/2021 added size to tree 
+
+            reSize(whereToInsertNode,1);// recalculate size from parent to root
             if(currNode.getKey() < this.minNode.getKey()){
                 this.minNode=currNode;
             }
             if(currNode.getKey()>this.maxNode.getKey()){
                 this.maxNode=currNode;
             }
-            reSize(whereToInsertNode,1);// recalculate size from parent to root
         }
-//        reHeight(whereToInsertNode,1);//todo-change name
+        reHeight(whereToInsertNode,1);//todo-change name
         return rebalanceInsert(currNode);
     }
     private void reHeight(IAVLNode parent, int i) {
@@ -221,10 +218,9 @@ public class AVLTree {
             switch (caseName) {
                 case "case1":
                     // problem might moved up if so fix that- moving upward recursively
+                    updateSize(node);
                     promote(parent);
                     return 1+rebalanceInsert(parent);
-                case "caseB":
-                    return 0; //the tree is a valid tree no need to rebalance it.
                 case "case2left":
                     //single right rotation & demote(z)--> re-balancing completed
                     singleRightRotation(node);
@@ -392,10 +388,10 @@ public class AVLTree {
      * Returns -1 if an item with key k was not found in the tree.
      */
     public int delete(int k) {
-        int counter; // countes number of operations
-       if(this.empty()){
-           return -1; // the item wasnt found in tree because its empty
-       }
+        // maybe use switch case in order to make it a recursion
+        if(this.empty()){
+            return -1; // the item wasnt found in tree because its empty
+        }
         IAVLNode nodeToDelete = treePosition(this.root, k); // comment that O(logn)
         IAVLNode parent = nodeToDelete.getParent();
         if (nodeToDelete.getKey() != k){ // doesn't exist
@@ -413,7 +409,6 @@ public class AVLTree {
                     if (parent!=null){
                         reSize(parent,-1);
                     }
-                    counter = rebalanceDelete(parent);// TODO: 06/12/2021 check 
                 }else {
                     if (isUnary(nodeToDelete)){
                         if (nodeToDelete == this.root){
@@ -429,26 +424,23 @@ public class AVLTree {
                             // size in new root is updated
                             return 0;// no rebalancing was needed (before delete the tree was balanced)
                         }
-                        counter = rebalanceDelete(parent); // TODO: 06/12/2021 check 
                     }else {
                         IAVLNode replace = replaceWithSuccessor(nodeToDelete);
                         // TODO: 04/12/2021 check if we don't do reSize twice
                         if (replace!=null){
                             reSize(replace, -1);
                         }
-                        counter = rebalanceDelete(replace);
                     }
                 }
             }
         }
         if (nodeToDelete.getKey() == this.minNode.getKey()){
-            this.minNode = findSuccessor(minNode);// TODO: 06/12/2021 chack min 
+            this.minNode = findMin();
         }
         if (nodeToDelete.getKey() == this.maxNode.getKey()){
-            this.maxNode = findPredecessor(maxNode);// TODO: 06/12/2021 change max
+            this.maxNode = findMin();
         }
-        this.size--; // TODO: 06/12/2021 check size 
-        return counter;
+        return rebalanceDelete(parent);
     }
 
     private IAVLNode findSuccessor(IAVLNode nodeToDelete) {
@@ -465,26 +457,6 @@ public class AVLTree {
                     return successor;
                 }
                 successor = successor.getParent();
-            }
-        }
-        return null;
-    }
-
-    private IAVLNode findPredecessor(IAVLNode node){
-        if (node.getLeft().isRealNode()){
-            IAVLNode LChild = node.getLeft();
-            while(LChild.getRight().isRealNode()){
-                LChild = LChild.getRight();
-            }
-            return LChild;
-        }
-        else {
-            IAVLNode parent = node.getParent();
-            while (parent != null) {
-                if (parent.getKey() < node.getKey()) {
-                    return parent;
-                }
-                parent = node.getParent();
             }
         }
         return null;
@@ -799,13 +771,12 @@ public class AVLTree {
      * Returns the number of nodes in the tree.
      */
     public int size() {
-        return this.size;
-//        if (!empty()){
-//            return root.getSize();
-//        }
-//        //todo- gal- write sideUpdate method
-//        // update size field during tree functions
-//        return -1;
+        if (!empty()){
+            return root.getSize();
+        }
+        //todo- gal- write sideUpdate method
+        // update size field during tree functions
+        return -1;
     }
 
     /**
@@ -838,7 +809,7 @@ public class AVLTree {
             biggerSubT.minNode = findSuccessor(minNode);
         }
         if (whereTosplit.getKey() == minNode.getKey()){
-            smallerSubT.maxNode = findPredecessor(maxNode);// TODO: 06/12/2021 check max predecessor 
+            smallerSubT.maxNode = smallerSubT.findMax();
         }
         if (node.getRight().isRealNode()){
             biggerSubT = new AVLTree(node.getRight());
@@ -1066,16 +1037,11 @@ public class AVLTree {
 
 
     //    things to implement
-    private void singleRightRotation(IAVLNode leftSonX) {
-//        IAVLNode parent=node.getParent();
-//        //todo-take care of rotations
-//        IAVLNode rightSonb = leftSonX.getRight();
-//        node.setParent(leftSonX);
-//        leftSonX.setRight(node);
-//        node.setLeft(rightSonb);
+    private void singleRightRotation(AVLTree.IAVLNode leftSonX) {
 
-        IAVLNode parent = leftSonX.getParent();
-        IAVLNode RChild = leftSonX.getRight();
+
+        AVLTree.IAVLNode parent = leftSonX.getParent();
+        AVLTree.IAVLNode RChild = leftSonX.getRight();
 
         replacePointers(leftSonX, parent);
 
@@ -1088,9 +1054,9 @@ public class AVLTree {
 
     }
 
-    private void singleLeftRotation(IAVLNode rightSonX) {
-        IAVLNode parent = rightSonX.getParent();
-        IAVLNode LChild = rightSonX.getLeft();
+    private void singleLeftRotation(AVLTree.IAVLNode rightSonX) {
+        AVLTree.IAVLNode parent = rightSonX.getParent();
+        AVLTree.IAVLNode LChild = rightSonX.getLeft();
 
         replacePointers(rightSonX, parent);
 
@@ -1103,7 +1069,7 @@ public class AVLTree {
 
     }
 
-    private void replacePointers(IAVLNode rightSonX, IAVLNode parent) {
+    private void replacePointers(AVLTree.IAVLNode rightSonX, AVLTree.IAVLNode parent) {
         if(parent.getParent() == null){
             this.root = rightSonX;
         }
@@ -1118,8 +1084,11 @@ public class AVLTree {
     }
 
     private boolean isRebalancingInSertDone(IAVLNode parent){
-        //case in which the rebalancing is not done.
-        return parent.getHeight() - parent.getLeft().getHeight() != 1 || parent.getHeight() - parent.getRight().getHeight() != 1;
+        if(parent.getHeight()-parent.getLeft().getHeight()==1 && parent.getHeight()-parent.getRight().getHeight()==1){
+            //case in which the rebalancing is not done.
+            return false;
+        }
+        return true;
     }
     //todo-added print funcionality is here -delete later
 
