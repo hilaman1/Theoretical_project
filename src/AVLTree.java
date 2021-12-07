@@ -36,7 +36,7 @@ public class AVLTree {
     private IAVLNode treePosition(IAVLNode nodeX, int k) {
         //needs to be implemented
         IAVLNode posNode = null;
-        while (nodeX!=EXTERNALNODE && nodeX!=null){
+        while (nodeX.isRealNode() && nodeX!=null){
             posNode=nodeX;
             if (k==nodeX.getKey()){
                 return nodeX;
@@ -140,7 +140,7 @@ public class AVLTree {
      * A promotion/rotation counts as one re-balance operation, double-rotation is counted as 2.
      * Returns -1 if an item with key k already exists in the tree.
      */
-    public int insert(int k, String i) { // TODO: 06/12/2021 insert
+    public int insert(int k, String i) {
         if(this.empty()){
             // if this is the first insert we should update its fields
             IAVLNode firstNode = new AVLNode(k, i, EXTERNALNODE, EXTERNALNODE, 0,1);
@@ -151,7 +151,6 @@ public class AVLTree {
         }
         IAVLNode whereToInsertNode = treePosition(this.root, k); // comment that O(logn)
         int keyLastPos=whereToInsertNode.getKey();
-        // TODO: 04/12/2021 create constructor
         IAVLNode currNode = new AVLNode(k, i, EXTERNALNODE, EXTERNALNODE, 0,1);
         if (keyLastPos == k) // if the node exists in the tree
             return -1;
@@ -184,8 +183,8 @@ public class AVLTree {
                 this.maxNode=currNode;
             }
         }
-//        reHeight(whereToInsertNode,1);//todo-change name
-        return rebalanceInsert(currNode); // TODO: 07/12/2021 changes to currNode instead of whereToInsertNode
+
+        return rebalanceInsert(currNode);
     }
     private void reHeight(IAVLNode parent, int i) {
         while(parent != null) {
@@ -206,25 +205,12 @@ public class AVLTree {
         // this is where the rebalancing proccess is done
         // return the number of operation needed in order to maintain the AVL invariants.
         int cnt=0;
-//        if (node==this.root){
-//            return cnt; //todo- check that
-//        }
-//        if(isRebalancingInSertDone(node)) {
-//            //when the tree is balanced when we call the method
-//            if (isUnary(parentOfInsertedNode)) {
-//                promote(parentOfInsertedNode);//todo-check that
-//                //            node.setSize(node.getSize()+1);
-//                cnt++;
-//            }
-//            //reSize(node,1);// todo-check if this is needed or only local change in hieght
-//            //updateHeight(node); //todo-check if needed here -05.12
-//            // return 0;//todo-check that
+
         String caseName = insertionCase(currNode);
         if (currNode.getParent() != null) {
                 // in order to check rank diff between node and his parent we need to make sure its not null
                 //}
                 // check insertion cases
-//                IAVLNode parentOfParent = currNode.getParent(); todo parent of all pointer
 
         switch (caseName) {
             case "case1":
@@ -312,7 +298,6 @@ public class AVLTree {
         }
 //        }
         return cnt;
-        // TODO: 05/12/2021 check
     }
 
     private void demote(IAVLNode node) {
@@ -444,7 +429,6 @@ public class AVLTree {
             } else {
                 if(nodeToDelete.isLeaf()){
                     deleteLeaf(nodeToDelete);
-                    // TODO: 04/12/2021 check if we don't do reSize twice
                     if (parent!=null){
                         reSize(parent,-1);
                     }
@@ -455,8 +439,7 @@ public class AVLTree {
                         if (nodeToDelete == this.root){
                             this.root = this.findSuccessor(nodeToDelete);
                         }
-                        deleteUnary(nodeToDelete);// todo-hila did check the above condition
-                        // TODO: 04/12/2021 check if we don't do reSize twice
+                        deleteUnary(nodeToDelete);
                         if (parent!=null){
                             reSize(parent,-1);
                         }
@@ -468,7 +451,6 @@ public class AVLTree {
                         counter = rebalanceDelete(nodeToDelete.getParent());
                     }else {
                         IAVLNode replace = replaceWithSuccessor(nodeToDelete);
-                        // TODO: 04/12/2021 check if we don't do reSize twice
                         if (replace!=null){
                             reSize(replace, -1);
                         }
@@ -504,7 +486,6 @@ public class AVLTree {
     }
 
     private boolean isUnary(IAVLNode nodeToDelete) {
-        //todo-check that if works fine
         return (((!nodeToDelete.getRight().isRealNode()) && nodeToDelete.getLeft().isRealNode())
                 || (nodeToDelete.getRight().isRealNode() && !nodeToDelete.getLeft().isRealNode()));
     }
@@ -730,7 +711,7 @@ public class AVLTree {
      * or null if the tree is empty.
      */
     public IAVLNode findMin()
-    {//todo- check viability
+    {
         if (this.empty()){
             return null;
         }
@@ -783,7 +764,7 @@ public class AVLTree {
             KeysToArrayRecHelper(root.getLeft(), keysArray, pos);
             keysArray[pos] = root.getKey();// insert curr root in the corresponding pos
             pos++;
-            KeysToArrayRecHelper(root.getRight(), keysArray, pos);// todo- check if pos+1 is needed
+            KeysToArrayRecHelper(root.getRight(), keysArray, pos);
 //			return keysArray;//check
         }
 //		return keysArray;// missing return statement error
@@ -809,7 +790,7 @@ public class AVLTree {
             infoToArrayRecHelper(root.getLeft(), keysArray, pos);
             keysArray[pos] = root.getValue();// insert curr root in the corresponding pos
             pos++;
-            infoToArrayRecHelper(root.getRight(), keysArray, pos);// todo- check if pos+1 is needed
+            infoToArrayRecHelper(root.getRight(), keysArray, pos);
 //			return keysArray;//check
         }
     }
@@ -839,8 +820,6 @@ public class AVLTree {
         if (!empty()){
             return root.getSize();
         }
-        //todo- gal- write sideUpdate method
-        // update size field during tree functions
         return -1;
     }
 
@@ -862,6 +841,7 @@ public class AVLTree {
      * precondition: search(x) != null (i.e. you can also assume that the tree is not empty)
      * postcondition: none
      */
+    // TODO: 07/12/2021 split
     public AVLTree[] split(int x) {
         AVLTree biggerSubT = new AVLTree(); // holds nodes with keys bigger than x
         AVLTree smallerSubT = new AVLTree(); // hold nodes keys smaller than x
@@ -873,7 +853,7 @@ public class AVLTree {
         if (whereTosplit.getKey() == minNode.getKey()){
             biggerSubT.minNode = findSuccessor(minNode);
         }
-        if (whereTosplit.getKey() == minNode.getKey()){
+        if (whereTosplit.getKey() == maxNode.getKey()){
             smallerSubT.maxNode = smallerSubT.findMax();
         }
         if (node.getRight().isRealNode()){
@@ -884,14 +864,12 @@ public class AVLTree {
         }
 
         while(parent != null) {
-            if (node == parent.getRight()) {
+            if (node == parent.getRight()) { // node is where to split
                 // parent and left tree is smaller than x
                 node = parent;
                 parent = parent.getParent();
-
                 if (node.getLeft().isRealNode()) {
                     treeToJoin = new AVLTree(node.getLeft());
-
                 } else {
                     treeToJoin = new AVLTree();
                 }
@@ -899,11 +877,12 @@ public class AVLTree {
                 node.setLeft(this.EXTERNALNODE);
                 node.setRight(this.EXTERNALNODE);
                 node.setHeight(0);
+                node.setSize(1);
                 smallerSubT.join(node, treeToJoin);
             } else {
                 node = parent;
                 parent = parent.getParent();
-                if (node.getRight().getHeight() != -1) {
+                if (node.getRight().isRealNode()) {
                     treeToJoin = new AVLTree(node.getRight());
                 } else {
                     treeToJoin = new AVLTree();
@@ -912,6 +891,7 @@ public class AVLTree {
                 node.setLeft(this.EXTERNALNODE);
                 node.setRight(this.EXTERNALNODE);
                 node.setHeight(0);
+                node.setSize(1);
                 biggerSubT.join(node, treeToJoin);
             }
         }
@@ -927,6 +907,7 @@ public class AVLTree {
      * precondition: keys(t) < x < keys() or keys(t) > x > keys(). t/tree might be empty (rank = -1).
      * postcondition: none
      */
+    // TODO: 07/12/2021 join
     public int join(IAVLNode x, AVLTree t) {
         // take care of empty trees (both,one)
         if (t.empty()) {
@@ -953,7 +934,6 @@ public class AVLTree {
             //during insert size is updated and min &max of t
             this.minNode=t.minNode;
             this.maxNode=t.maxNode;
-
             return this.getRoot().getHeight() + 2;
         }
         //both of them are not empty
@@ -967,13 +947,13 @@ public class AVLTree {
             if (isThisbiggerKeys) {
                 currNode = findInsertPos(this.root, 'L', rankThisRoot, rankTRoot); //b
                 connect(currNode, x, t.root, 'L');
-                updateHeight(x);
+//                updateHeight(x);
                 sizeCalc(x);//x
                 sizeCalc(currNode.getParent());//c
             } else { //  keys(this)< x < keys(t)
                 currNode = findInsertPos(this.root, 'R', rankThisRoot, rankTRoot);
                 connect(currNode, x, t.root, 'R');
-                updateHeight(x);
+//                updateHeight(x);
                 sizeCalc(x);//x
                 sizeCalc(currNode.getParent());//c
             }
@@ -995,7 +975,7 @@ public class AVLTree {
                 connect(x, this.root, t.root);// t should be the right son since his keys are bigger
             }
 
-            updateHeight(x);// x rank should be k+1
+//            updateHeight(x);// x rank should be k+1
             sizeCalc(x);//x
             this.root = x;// we join to this then we should update its root
             this.minNode=min;
@@ -1008,7 +988,7 @@ public class AVLTree {
                 // keys(this) > x > keys(t)
                 currNode=findInsertPos(t.root,'R',rankTRoot,rankThisRoot);
                 connect(currNode,x,this.root,'R');
-                updateHeight(x);
+//                updateHeight(x);
                 sizeCalc(x);//x
                 sizeCalc(currNode.getParent());//c
             }
@@ -1016,7 +996,7 @@ public class AVLTree {
                 // keys(this) < x < keys(t)
                 currNode= findInsertPos(t.root,'L',rankTRoot,rankThisRoot);
                 connect(currNode,x,this.root,'L');
-                updateHeight(x);
+//                updateHeight(x);
                 sizeCalc(x);//x
                 sizeCalc(currNode.getParent());//c
             }
@@ -1125,13 +1105,13 @@ public class AVLTree {
         // currNode becomes root instead of currNodeParent
 //        begins rotations
         currNode.setParent(currNodeParent.getParent()); // W is parent of X
-        currNode.setRight(currNodeParent); // TODO: 07/12/2021 maybe change order
+        currNode.setRight(currNodeParent);
         currNodeParent.setParent(currNode); // X is parent of Z
         currNodeParent.setLeft(RChild); // b is left child of Z
         RChild.setParent(currNodeParent); // z is father of b
     }
 
-    private void singleLeftRotation(IAVLNode currNode) { // todo maybe parent of parent
+    private void singleLeftRotation(IAVLNode currNode) {
         IAVLNode Lchild=currNode.getLeft();
         IAVLNode currNodeParent = currNode.getParent();
         replacePointersOfParent(currNode);
@@ -1343,7 +1323,7 @@ public class AVLTree {
         private IAVLNode left;
         private IAVLNode right;
         private int height;
-        private int size; // TODO: 05/12/2021 check if is good
+        private int size;
 
 //	public AVLNode(int key, String value){
 //		// if is leaf
@@ -1361,7 +1341,6 @@ public class AVLTree {
             this.size = size;
         }
 
-        // TODO: 04/12/2021 update constructor for ExtrenalLeaf
         public int getKey() {
             return this.key;
         }
