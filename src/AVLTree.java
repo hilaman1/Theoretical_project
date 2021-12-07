@@ -478,10 +478,10 @@ public class AVLTree {
             }
         }
         if (nodeToDelete.getKey() == this.minNode.getKey()){
-            this.minNode = findMin();
+            this.minNode = findSuccessor(this.minNode);
         }
         if (nodeToDelete.getKey() == this.maxNode.getKey()){
-            this.maxNode = findMin();
+            this.maxNode =findMax();
         }
         return counter;
     }
@@ -495,14 +495,12 @@ public class AVLTree {
             return successor;
         }else{
             IAVLNode successor = nodeToDelete.getParent();
-            while (nodeToDelete!=null){
-                if (nodeToDelete.getKey()>successor.getKey()){
-                    return successor;
-                }
-                successor = successor.getParent();
+            while (nodeToDelete.isRealNode() && nodeToDelete == successor.getRight()){
+                nodeToDelete = successor;
+                successor = nodeToDelete.getParent();
             }
+            return successor;
         }
-        return null;
     }
 
     private boolean isUnary(IAVLNode nodeToDelete) {
@@ -613,12 +611,13 @@ public class AVLTree {
 //                    return 0;
                 case ("case1"):
                     demote(parent);
-                    sizeCalc(parent);
+//                    sizeCalc(parent);
                     counter++;
                     counter += rebalanceDelete(parent.getParent());
                     break;
                 case ("case2right"):
                     IAVLNode RChild = parent.getRight();
+//                    this.bfs_print();
                     singleLeftRotation(parent.getRight());
                     promote(RChild); //y
                     demote(parent); //z
@@ -628,6 +627,7 @@ public class AVLTree {
                     break;
                 case ("case2left"):
                     IAVLNode LChild = parent.getLeft();
+//                    this.bfs_print();
                     singleRightRotation(parent.getLeft());
                     promote(LChild); //y
                     demote(parent); //z
@@ -637,6 +637,7 @@ public class AVLTree {
                     break;
                 case ("case3right"):
                     IAVLNode rchild = parent.getRight();
+//                    this.bfs_print();
                     singleLeftRotation(parent.getRight());
                     demote(parent); //z
                     demote(parent); //z
@@ -647,6 +648,7 @@ public class AVLTree {
                     break;
                 case ("case3left"):
                     IAVLNode LeftSon = parent.getLeft();
+//                    this.bfs_print();
                     singleRightRotation(parent.getLeft());
                     demote(parent); //z
                     demote(parent); //z
@@ -659,7 +661,9 @@ public class AVLTree {
                     IAVLNode RightSon = parent.getRight(); //y
                     IAVLNode RightLeftSon = RightSon.getLeft(); //a
                     singleRightRotation(parent.getRight().getLeft()); //y-a
-                    singleLeftRotation(parent.getRight().getLeft()); //a-z
+                    this.bfs_print();
+                    singleLeftRotation(RightLeftSon); //a-z
+                    this.bfs_print();
                     demote(parent); //z
                     demote(parent); //z
                     demote(RightSon); //y
@@ -673,8 +677,10 @@ public class AVLTree {
                 case ("case4left"):
                     IAVLNode Lson = parent.getLeft(); //y
                     IAVLNode LRSon = Lson.getRight(); //a
+//                    this.bfs_print();
                     singleLeftRotation(parent.getLeft().getRight()); //y-a
-                    singleRightRotation(parent.getLeft().getRight()); //a-z
+//                    this.bfs_print();
+                    singleRightRotation(LRSon); //a-z
                     demote(parent); //z
                     demote(parent); //z
                     demote(Lson); //y

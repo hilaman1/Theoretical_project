@@ -209,134 +209,134 @@ public class Tests {
         if (!checkBalanceOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 5");
         if (!checkOrderingOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 6");
         if (tree.search(88) != null) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 7");
 
         tree.delete(19);
         if (!checkBalanceOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 8");
         if (!checkOrderingOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 9");
         if (tree.search(19) != null) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 10");
         tree.delete(16);
         if (!checkBalanceOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 11");
         if (!checkOrderingOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 12");
         if (tree.search(16) != null) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 13");
         tree.delete(28);
         if (!checkBalanceOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 14");
         if (!checkOrderingOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 15");
         if (tree.search(16) != null) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 16");
         tree.delete(24);
         if (!checkBalanceOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 17");
         if (!checkOrderingOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 18");
         if (tree.search(24) != null) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 19");
         tree.delete(36);
         if (!checkBalanceOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 20");
         if (!checkOrderingOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 21");
         if (tree.search(36) != null) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 22");
         tree.delete(52);
         if (!checkBalanceOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 23");
         if (!checkOrderingOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 24");
         if (tree.search(52) != null) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 25");
         tree.delete(93);
         if (!checkBalanceOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 26");
         if (!checkOrderingOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 27");
         if (tree.search(93) != null) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 28");
         tree.delete(86);
         if (!checkBalanceOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 29");
         if (!checkOrderingOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 30");
         if (tree.search(86) != null) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 31");
 
         tree.delete(83);
         if (!checkBalanceOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 32");
         if (!checkOrderingOfTree(tree.getRoot())) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 33");
         if (tree.search(83) != null) {
             return false;
         }
-        System.out.println("passed this ");
+        System.out.println("passed this 34");
         return true;
     }
 
