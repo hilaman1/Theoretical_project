@@ -9,14 +9,32 @@ public class myTester {
     int[] values;
     int[] values3;
     int[] values4;
-    public boolean split() {
+    public boolean keysToArray() {
         AVLTree avlTree = new AVLTree();
-        for (int i = 0; i < 1000; i++) {
+        String infoarray[];
+        int[] keysarray;
+        for (int i = 0; i < 100; i++) {
             avlTree.insert(i, "num" + i);
         }
-        avlTree.split(786);
+        keysarray = avlTree.keysToArray();
+        infoarray = avlTree.infoToArray();
+        for (int i = 0; i < 100; i++) {
+            if (!(infoarray[i].equals("num" + i) && keysarray[i] == i)) {
+                System.out.println(i);
+                return false;
+            }
+        }
         return true;
+
     }
+//    public boolean split() {
+//        AVLTree avlTree = new AVLTree();
+//        for (int i = 0; i < 1000; i++) {
+//            avlTree.insert(i, "num" + i);
+//        }
+//        avlTree.split(786);
+//        return true;
+//    }
 //    public boolean testRemove() {
 //        AVLTree tree = new AVLTree();
 //        if (!tree.empty()) {
@@ -224,6 +242,6 @@ public class myTester {
 
     public static void main(String[] args) {
         myTester tester = new myTester();
-        tester.split();
+        tester.keysToArray();
     }
 }
