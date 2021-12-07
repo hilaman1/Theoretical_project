@@ -335,8 +335,6 @@ public class AVLTree {
         // check cases of right / left child outside
         // TODO: 04/12/2021 create arrays one time in order to save in space complexity
         int[] rankDiffParent = rankDifference(parent);
-        int[] rankDiffRChild = rankDifference(parent.getRight());
-        int[] rankDiffLChild = rankDifference(parent.getLeft());
 
 //      check if node is right or left son and replace with External node + return 0
 //        if ((Arrays.equals(rankDiffParent, new int[]{2, 1}) || (Arrays.equals(rankDiffParent, new int[]{1, 2})) &&
@@ -348,49 +346,58 @@ public class AVLTree {
         if (Arrays.equals(rankDiffParent, new int[]{2, 2})) {
             return "case1";
         }
-        //      rotation left on z-y, promote(y) demote(z)
-        //      return 3 + rebalance (parent)
-        //      parent is Unary
-        if (((Arrays.equals(rankDiffParent, new int[]{3, 1}) &&
-                (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
-                (Arrays.equals(rankDiffRChild, new int[]{1, 1}))))) {
-            return "case2right";
+        if (parent.getLeft().isRealNode()){
+            int[] rankDiffLChild = rankDifference(parent.getLeft());
+//      rotation right on z-y, promote(y) demote(z)
+            //      return 3 + rebalance (parent)
+            if (((Arrays.equals(rankDiffParent, new int[]{1, 3}) &&
+                    (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
+                    (Arrays.equals(rankDiffLChild, new int[]{1, 1}))))) {
+                return "case2left";
+            }
+            //      rotation right on z-y, 2xdemote(z)
+            //      return 3 + rebalance (parent)
+            if (((Arrays.equals(rankDiffParent, new int[]{1, 3}) &&
+                    (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
+                    (Arrays.equals(rankDiffLChild, new int[]{1, 2}))))) {
+                return "case3left";
+            }
+            //      rotation left on y-a, rotation right on a-z, 2xdemote(z), demote(y), promote(a)
+            //      return 6 + rebalance (parent)
+            if (((Arrays.equals(rankDiffParent, new int[]{1, 3}) &&
+                    (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
+                    (Arrays.equals(rankDiffLChild, new int[]{2, 1}))))) {
+                return "case4left";
+            }
         }
-        //      rotation right on z-y, promote(y) demote(z)
-        //      return 3 + rebalance (parent)
-        if (((Arrays.equals(rankDiffParent, new int[]{1, 3}) &&
-                (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
-                (Arrays.equals(rankDiffLChild, new int[]{1, 1}))))) {
-            return "case2left";
+        if (parent.getRight().isRealNode()){
+            int[] rankDiffRChild = rankDifference(parent.getRight());
+            //      rotation left on z-y, promote(y) demote(z)
+            //      return 3 + rebalance (parent)
+            //      parent is Unary
+            if (((Arrays.equals(rankDiffParent, new int[]{3, 1}) &&
+                    (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
+                    (Arrays.equals(rankDiffRChild, new int[]{1, 1}))))) {
+                return "case2right";
+            }
+
+            //      rotation left on z-y, 2xdemote(z)
+            //      return 3 + rebalance (parent)
+            if (((Arrays.equals(rankDiffParent, new int[]{3, 1}) &&
+                    (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
+                    (Arrays.equals(rankDiffRChild, new int[]{2, 1}))))) {
+                return "case3right";
+            }
+
+            //      rotation right on y-a, rotation left on a-z, 2xdemote(z), demote(y), promote(a)
+            //      return 6 + rebalance (parent)
+            if (((Arrays.equals(rankDiffParent, new int[]{3, 1}) &&
+                    (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
+                    (Arrays.equals(rankDiffRChild, new int[]{1, 2}))))) {
+                return "case4right";
+            }
         }
-        //      rotation left on z-y, 2xdemote(z)
-        //      return 3 + rebalance (parent)
-        if (((Arrays.equals(rankDiffParent, new int[]{3, 1}) &&
-                (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
-                (Arrays.equals(rankDiffRChild, new int[]{2, 1}))))) {
-            return "case3right";
-        }
-        //      rotation right on z-y, 2xdemote(z)
-        //      return 3 + rebalance (parent)
-        if (((Arrays.equals(rankDiffParent, new int[]{1, 3}) &&
-                (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
-                (Arrays.equals(rankDiffLChild, new int[]{1, 2}))))) {
-            return "case3left";
-        }
-        //      rotation right on y-a, rotation left on a-z, 2xdemote(z), demote(y), promote(a)
-        //      return 6 + rebalance (parent)
-        if (((Arrays.equals(rankDiffParent, new int[]{3, 1}) &&
-                (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
-                (Arrays.equals(rankDiffRChild, new int[]{1, 2}))))) {
-            return "case4right";
-        }
-        //      rotation left on y-a, rotation right on a-z, 2xdemote(z), demote(y), promote(a)
-        //      return 6 + rebalance (parent)
-        if (((Arrays.equals(rankDiffParent, new int[]{1, 3}) &&
-                (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
-                (Arrays.equals(rankDiffLChild, new int[]{2, 1}))))) {
-            return "case4left";
-        }
+
         return "";
     }
 
@@ -418,6 +425,7 @@ public class AVLTree {
      */
     public int delete(int k) {
         // maybe use switch case in order to make it a recursion
+        int counter = 0;
         if(this.empty()){
             return -1; // the item wasnt found in tree because its empty
         }
@@ -438,7 +446,9 @@ public class AVLTree {
                     if (parent!=null){
                         reSize(parent,-1);
                     }
-                }else {
+                    counter = rebalanceDelete(nodeToDelete.getParent());
+                }
+                else {
                     if (isUnary(nodeToDelete)){
                         if (nodeToDelete == this.root){
                             this.root = this.findSuccessor(nodeToDelete);
@@ -451,14 +461,16 @@ public class AVLTree {
                         if(parent==null){ // nodeToDelete is the root so parent is null
                             //since we change the root to be the only son of the original root than
                             // size in new root is updated
-                            return 0;// no rebalancing was needed (before delete the tree was balanced)
+                            counter = 0;// no rebalancing was needed (before delete the tree was balanced)
                         }
+                        counter = rebalanceDelete(nodeToDelete.getParent());
                     }else {
                         IAVLNode replace = replaceWithSuccessor(nodeToDelete);
                         // TODO: 04/12/2021 check if we don't do reSize twice
                         if (replace!=null){
                             reSize(replace, -1);
                         }
+                        counter = rebalanceDelete(replace);
                     }
                 }
             }
@@ -469,7 +481,7 @@ public class AVLTree {
         if (nodeToDelete.getKey() == this.maxNode.getKey()){
             this.maxNode = findMin();
         }
-        return rebalanceDelete(parent);
+        return counter;
     }
 
     private IAVLNode findSuccessor(IAVLNode nodeToDelete) {
