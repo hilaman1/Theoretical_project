@@ -342,30 +342,32 @@ public class AVLTree {
 //                (!parent.getLeft().isRealNode() && parent.getRight().isRealNode()))) {
 //            return "case0";
 //        }
+
 //        demote(z)
         if (Arrays.equals(rankDiffParent, new int[]{2, 2})) {
             return "case1";
         }
+
         if (parent.getLeft().isRealNode()){
             int[] rankDiffLChild = rankDifference(parent.getLeft());
 //      rotation right on z-y, promote(y) demote(z)
             //      return 3 + rebalance (parent)
             if (((Arrays.equals(rankDiffParent, new int[]{1, 3}) &&
-                    (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
+//                    (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
                     (Arrays.equals(rankDiffLChild, new int[]{1, 1}))))) {
                 return "case2left";
             }
             //      rotation right on z-y, 2xdemote(z)
             //      return 3 + rebalance (parent)
             if (((Arrays.equals(rankDiffParent, new int[]{1, 3}) &&
-                    (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
+//                    (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
                     (Arrays.equals(rankDiffLChild, new int[]{1, 2}))))) {
                 return "case3left";
             }
             //      rotation left on y-a, rotation right on a-z, 2xdemote(z), demote(y), promote(a)
             //      return 6 + rebalance (parent)
             if (((Arrays.equals(rankDiffParent, new int[]{1, 3}) &&
-                    (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
+//                    (!parent.getRight().isRealNode()) && (parent.getLeft().isRealNode()) &&
                     (Arrays.equals(rankDiffLChild, new int[]{2, 1}))))) {
                 return "case4left";
             }
@@ -376,7 +378,7 @@ public class AVLTree {
             //      return 3 + rebalance (parent)
             //      parent is Unary
             if (((Arrays.equals(rankDiffParent, new int[]{3, 1}) &&
-                    (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
+//                    (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
                     (Arrays.equals(rankDiffRChild, new int[]{1, 1}))))) {
                 return "case2right";
             }
@@ -384,7 +386,7 @@ public class AVLTree {
             //      rotation left on z-y, 2xdemote(z)
             //      return 3 + rebalance (parent)
             if (((Arrays.equals(rankDiffParent, new int[]{3, 1}) &&
-                    (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
+//                    (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
                     (Arrays.equals(rankDiffRChild, new int[]{2, 1}))))) {
                 return "case3right";
             }
@@ -392,7 +394,7 @@ public class AVLTree {
             //      rotation right on y-a, rotation left on a-z, 2xdemote(z), demote(y), promote(a)
             //      return 6 + rebalance (parent)
             if (((Arrays.equals(rankDiffParent, new int[]{3, 1}) &&
-                    (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
+//                    (parent.getRight().isRealNode()) && (!parent.getLeft().isRealNode()) &&
                     (Arrays.equals(rankDiffRChild, new int[]{1, 2}))))) {
                 return "case4right";
             }
@@ -605,8 +607,7 @@ public class AVLTree {
     private int rebalanceDelete(IAVLNode parent) {
         int counter=0;
         String caseNum = deletetionCase(parent);
-        if (!caseNum.equals("")) {
-
+        if (!caseNum.equals("")) { // not "case0" = no need to rebalance
             switch (caseNum) {
 //                case ("case0"):
 //                    return 0;
@@ -614,68 +615,76 @@ public class AVLTree {
                     demote(parent);
                     sizeCalc(parent);
                     counter++;
-                case ("case2right"):
-                    IAVLNode right = parent.getRight();
-                    singleLeftRotation(parent);
-                    promote(right);
-                    demote(parent);
-                    updateSize(parent);
-                    updateSize(right);
-                    counter+=3;
-                case ("case2left"):
-                    IAVLNode left = parent.getLeft();
-                    singleRightRotation(parent);
-                    promote(left);
-                    demote(parent);
-                    updateSize(parent);
-                    updateSize(left);
-                    counter+=3;
-                case ("case3right"):
-                    IAVLNode rightSon = parent.getRight();
-                    singleLeftRotation(parent);
-                    demote(parent); //z
-                    demote(parent); //z
-                    updateSize(parent); //z
-                    updateSize(rightSon); //y
-                    counter+=3;
                     counter += rebalanceDelete(parent.getParent());
+                    break;
+                case ("case2right"):
+                    IAVLNode RChild = parent.getRight();
+                    singleLeftRotation(parent.getRight());
+                    promote(RChild); //y
+                    demote(parent); //z
+                    sizeCalc(parent);
+                    updateSize(RChild);
+                    counter+=3;
+                    break;
+                case ("case2left"):
+                    IAVLNode LChild = parent.getLeft();
+                    singleRightRotation(parent.getLeft());
+                    promote(LChild); //y
+                    demote(parent); //z
+                    sizeCalc(parent);
+                    updateSize(LChild);
+                    counter+=3;
+                    break;
+                case ("case3right"):
+                    IAVLNode rchild = parent.getRight();
+                    singleLeftRotation(parent.getRight());
+                    demote(parent); //z
+                    demote(parent); //z
+                    sizeCalc(parent); //z
+                    updateSize(rchild); //y
+                    counter+=3;
+                    counter += rebalanceDelete(parent.getParent().getParent()); // parent of z is parent of y
+                    break;
                 case ("case3left"):
                     IAVLNode LeftSon = parent.getLeft();
-                    singleRightRotation(parent);
+                    singleRightRotation(parent.getLeft());
                     demote(parent); //z
                     demote(parent); //z
-                    updateSize(parent); //z
+                    sizeCalc(parent); //z
                     updateSize(LeftSon); //y
                     counter+=3;
-                    counter += rebalanceDelete(parent.getParent());
+                    counter += rebalanceDelete(parent.getParent().getParent()); // parent of z is parent of y
+                    break;
                 case ("case4right"):
                     IAVLNode RightSon = parent.getRight(); //y
                     IAVLNode RightLeftSon = RightSon.getLeft(); //a
-                    singleRightRotation(parent); //y-a
-                    singleLeftRotation(parent); //a-z
+                    singleRightRotation(parent.getRight().getLeft()); //y-a
+                    singleLeftRotation(parent.getRight().getLeft()); //a-z
                     demote(parent); //z
                     demote(parent); //z
                     demote(RightSon); //y
                     promote(RightLeftSon); //a
-                    updateSize(parent); //z
-                    updateSize(RightSon); //y
+                    sizeCalc(parent); //z
+                    sizeCalc(RightSon); //y
                     updateSize(RightLeftSon); //a
                     counter+=6;
-                    counter += rebalanceDelete(parent.getParent());
+                    counter += rebalanceDelete(parent.getParent().getParent());
+                    break;
                 case ("case4left"):
                     IAVLNode Lson = parent.getLeft(); //y
                     IAVLNode LRSon = Lson.getRight(); //a
-                    singleLeftRotation(parent); //y-a
-                    singleRightRotation(parent); //a-z
+                    singleLeftRotation(parent.getLeft().getRight()); //y-a
+                    singleRightRotation(parent.getLeft().getRight()); //a-z
                     demote(parent); //z
                     demote(parent); //z
                     demote(Lson); //y
                     promote(LRSon); //a
-                    updateSize(parent); //z
-                    updateSize(Lson); //y
+                    sizeCalc(parent); //z
+                    sizeCalc(Lson); //y
                     updateSize(LRSon); //a
                     counter+=6;
-                    counter += rebalanceDelete(parent.getParent());
+                    counter += rebalanceDelete(parent.getParent().getParent());
+                    break;
             }
         }
         return counter;
