@@ -238,7 +238,7 @@ public class AVLTree {
                 //single right rotation & demote(z)--> re-balancing completed
                 IAVLNode parent = currNode.getParent();
                 singleRightRotation(currNode);
-                updateSize(parent); //z- right child now
+                sizeCalc(parent); //z- right child now
                 updateSize(currNode);//x-parent now
                 demote(parent);
                 cnt+=2;
@@ -247,7 +247,8 @@ public class AVLTree {
                 //single left rotation & demote(z)--> re-balancing completed
                 IAVLNode parentx = currNode.getParent(); //cur parent
                 singleLeftRotation(currNode); //cur
-                updateSize(parentx); //z- left child now
+//                this.bfs_print();
+                sizeCalc(parentx); //z- left child now
                 updateSize(currNode);//x-parent now
                 demote(parentx);
                 cnt+=2;
@@ -260,8 +261,8 @@ public class AVLTree {
                 singleRightRotation(leftSonA); //a
                 //after right rotation leftSonA become right son of parent
                 singleLeftRotation(leftSonA); //a
-                updateSize(parentxx);//z
-                updateSize(currNode);//x
+                sizeCalc(parentxx);//z
+                sizeCalc(currNode);//x
                 updateSize(leftSonA);//a
                 demote(parentxx);
                 demote(currNode);
@@ -276,8 +277,8 @@ public class AVLTree {
                 singleLeftRotation(rightSonB);
                 // after left rotation leftSonB become left son of parent
                 singleRightRotation(rightSonB);
-                updateSize(parentxxx);//z
-                updateSize(currNode);//x
+                sizeCalc(parentxxx);//z
+                sizeCalc(currNode);//x
                 updateSize(rightSonB);//b
                 demote(parentxxx);
                 demote(currNode);
@@ -289,7 +290,7 @@ public class AVLTree {
                 // sol: right rotation x-c & promote(x)
                 IAVLNode parentxxxx = currNode.getParent(); // c
                 singleRightRotation(currNode); // node is the root of joined subtree of x
-                updateSize(parentxxxx);//c
+                sizeCalc(parentxxxx);//c
                 updateSize(currNode);//x
                 promote(currNode);
                 cnt+=2;
@@ -301,7 +302,7 @@ public class AVLTree {
                 // sol: left rotation x-c & promote(x)
                 IAVLNode parentxxxxx = currNode.getParent(); // c
                 singleLeftRotation(currNode);// node is the root of joined subtree of x
-                updateSize(parentxxxxx);//c
+                sizeCalc(parentxxxxx);//c
                 updateSize(currNode);//x
                 promote(currNode);
                 cnt+=2;
@@ -1097,7 +1098,7 @@ public class AVLTree {
         // currNode becomes root instead of currNodeParent
 //        begins rotations
         currNode.setParent(currNodeParent.getParent()); // W is parent of X
-        currNode.setRight(currNode.getParent()); // TODO: 07/12/2021 maybe change order
+        currNode.setRight(currNodeParent); // TODO: 07/12/2021 maybe change order
         currNodeParent.setParent(currNode); // X is parent of Z
         currNodeParent.setLeft(RChild); // b is left child of Z
         RChild.setParent(currNodeParent); // z is father of b
@@ -1110,7 +1111,7 @@ public class AVLTree {
 //        // currNode becomes root instead of currNodeParent
 //        // the actual rotation here:
         currNode.setParent(currNodeParent.getParent()); // W is the parent of X
-        currNode.setLeft(currNode.getParent());
+        currNode.setLeft(currNodeParent);
         currNodeParent.setParent(currNode); // X is parent of Z
         currNodeParent.setRight(Lchild); // a is a right chilf of Z
         Lchild.setParent(currNodeParent); // z is parent of b
