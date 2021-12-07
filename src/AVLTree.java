@@ -245,7 +245,7 @@ public class AVLTree {
                     case "case3right":
                         //single left rotation & demote(z)--> re-balancing completed
                         IAVLNode parentx = parentOfInsertedNode.getParent();
-                        singleLeftRotation(parentOfInsertedNode);
+                        singleLeftRotation(parentx);
                         updateSize(parentOfParent); //z- left child now
                         updateSize(parentOfInsertedNode);//x-parent now
                         demote(parentx);
@@ -1084,7 +1084,7 @@ public class AVLTree {
         IAVLNode parentRight = parent.getRight();
         IAVLNode parentParent = parent.getParent();
 
-        replacePointersOfParent(parent, parentParent);
+        replacePointersOfParent(parent);
 
         parent.setRight(parent.getParent());
         parent.setParent(parentParent.getParent());
@@ -1110,11 +1110,15 @@ public class AVLTree {
         IAVLNode parentLeft = parent.getLeft();
         IAVLNode parentParent = parent.getParent();
 
-        replacePointersOfParent(parent, parentParent);
+        replacePointersOfParent(parent);
+        if (parentParent==null){
+            parent.setLeft(EXTERNALNODE);
 
-        parent.setLeft(parent.getParent());
-        parent.setParent(parentParent.getParent());
+        }else {
+            parent.setLeft(parentParent);
+        }
         parentParent.setParent(parent);
+        parent.setParent(parent.getRight());
         parentParent.setRight(parentLeft);
         parentLeft.setParent(parentParent);
 
@@ -1126,16 +1130,17 @@ public class AVLTree {
 
     }
 
-    private void replacePointersOfParent(IAVLNode parent,IAVLNode parentParent) {
-        if(parentParent.getParent() == null){
-            this.root = parent;
+    private void replacePointersOfParent(IAVLNode parent) {
+        IAVLNode parentParent = parent.getParent();
+        if(parentParent == null){
+            this.root = parent.getRight();
         }
-        if(parentParent.getParent() != null){
-            if(parentParent.getParent().getRight() == parentParent){
-                parentParent.getParent().setRight(parent);
+        if(parentParent != null){
+            if(parentParent.getRight() == parent){
+                parentParent.setLeft(parent);
             }
             else {
-                parentParent.getParent().setLeft(parent);
+                parentParent.setRight(parent);
             }
         }
     }
