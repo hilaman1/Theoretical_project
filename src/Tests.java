@@ -193,7 +193,7 @@ public class Tests {
         if (!tree.max().equals("93")) {
             return false;
         }
-        System.out.println("passed this 2_"+tree.maxNode.getValue());
+//        System.out.println("passed this 2_"+tree.maxNode.getValue());
         tree.bfs_print();
         if (!checkBalanceOfTree(tree.getRoot())) {
             System.out.println("check here 3");
