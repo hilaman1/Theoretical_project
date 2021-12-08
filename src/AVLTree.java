@@ -70,15 +70,44 @@ public class AVLTree {
      * <p>
      * Returns the info of an item with key k if it exists in the tree.
      * otherwise, returns null.
+     * Using finger tree method, starting search from maxNode
      */
     public String search(int k) {
         if (this.root != null){
-            IAVLNode x = treePosition(this.root,k);
+            IAVLNode x = treePositionMax(this.maxNode,k);
             if (x != null && x.getKey() == k){
                 return x.getValue();
             }
         }
         return null;
+    }
+
+    public IAVLNode treePositionMax(IAVLNode maxNode, int k) {
+        if (k > maxNode.getKey()){
+            return maxNode;
+        }
+        IAVLNode posNode = maxNode;
+        while (posNode.getParent() != null && posNode.getParent().getKey() > k) {
+            posNode = posNode.getParent();
+        }
+        if (posNode.getParent() !=null) {
+            posNode = posNode.getRight();
+            if (!posNode.getLeft().isRealNode()) {
+                return posNode;
+            }
+            return treePosition(posNode.getLeft(),k);
+        }else {
+            return treePosition(posNode.getLeft(),k);
+        }
+//        if (k==maxNode.getKey()){
+//                return maxNode;
+//            }
+//            if(k<maxNode.getKey()){
+//                maxNode=maxNode.getLeft();
+//            }
+//            else {
+//                maxNode=maxNode.getRight();
+//            }
     }
 
     /*
@@ -199,6 +228,53 @@ public class AVLTree {
 
         return rebalanceInsert(currNode);
     }
+    public int insertFingerTree(int k, String i) {
+        if(this.empty()){
+            // if this is the first insert we should update its fields
+            IAVLNode firstNode = new AVLNode(k, i, EXTERNALNODE, EXTERNALNODE, 0,1);
+            this.root = firstNode;
+            this.minNode=firstNode;
+            this.maxNode=firstNode;
+            return 0;
+        }
+        IAVLNode whereToInsertNode = treePosition(this.root, k); // comment that O(logn)
+        int keyLastPos=whereToInsertNode.getKey();
+        IAVLNode currNode = new AVLNode(k, i, EXTERNALNODE, EXTERNALNODE, 0,1);
+        if (keyLastPos == k) // if the node exists in the tree
+            return -1;
+        else { // if the node doesnt exists in the tree
+            currNode.setParent(whereToInsertNode);
+            // check properties of the node we need to insert after.
+            if (whereToInsertNode.isLeaf()) {
+                if (keyLastPos > currNode.getKey()) {
+                    whereToInsertNode.setLeft(currNode);
+                } else {
+                    whereToInsertNode.setRight(currNode);
+                }
+//                promote(whereToInsertNode);
+            }
+            else{ // whereToInsertNode is an Unary node
+                if (whereToInsertNode.getRight().isRealNode() && !whereToInsertNode.getLeft().isRealNode()){
+                    // only right son
+                    whereToInsertNode.setLeft(currNode);}
+                else {
+                    whereToInsertNode.setRight(currNode);
+                }
+            }
+            //maintaining fields
+
+            reSize(whereToInsertNode,1);// recalculate size from parent to root
+            if(currNode.getKey() < this.minNode.getKey()){
+                this.minNode=currNode;
+            }
+            if(currNode.getKey()>this.maxNode.getKey()){
+                this.maxNode=currNode;
+            }
+        }
+
+        return rebalanceInsert(currNode);
+    }
+
 
     private int rebalanceInsert(IAVLNode currNode) {
         // this is where the rebalancing proccess is done
@@ -725,7 +801,7 @@ public class AVLTree {
             return null;
         }
         IAVLNode currNode = this.root;
-        while (currNode.getRight()!=null){
+        while (currNode.getRight().isRealNode()){ // TODO: 08/12/2021 change to .isRealNode()) is final project
             currNode=currNode.getRight();
         }
         return currNode;
