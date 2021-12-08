@@ -7,6 +7,7 @@ public class AVLTree {
     private final IAVLNode EXTERNALNODE = new AVLNode(-1, null, null, null, -1,0);
     private IAVLNode maxNode; // pointer to the node with the maxNode key
     private IAVLNode minNode;
+    public int counter = 0;
 
     /**
      * public AVLTree()
@@ -83,6 +84,7 @@ public class AVLTree {
     }
 
     public IAVLNode treePositionMax(IAVLNode maxNode, int k) {
+        this.counter+=1;
         if (k > maxNode.getKey()){
             return maxNode;
         }
@@ -91,23 +93,23 @@ public class AVLTree {
             posNode = posNode.getParent();
         }
         if (posNode.getParent() !=null) {
-            posNode = posNode.getRight();
-            if (!posNode.getLeft().isRealNode()) {
+            if (posNode.getRight().isRealNode()) {
+                posNode = posNode.getRight();
+            }else {
                 return posNode;
             }
+//            return treePosition(posNode.getLeft(),k);
+        }
+        if (posNode.getLeft().isRealNode()){
+//            if (posNode.getLeft().isLeaf()){
+//                return posNode;
+//            }
             return treePosition(posNode.getLeft(),k);
         }else {
-            return treePosition(posNode.getLeft(),k);
+            return posNode;
         }
-//        if (k==maxNode.getKey()){
-//                return maxNode;
-//            }
-//            if(k<maxNode.getKey()){
-//                maxNode=maxNode.getLeft();
-//            }
-//            else {
-//                maxNode=maxNode.getRight();
-//            }
+
+//        return posNode;
     }
 
     /*
@@ -231,13 +233,14 @@ public class AVLTree {
     public int insertFingerTree(int k, String i) {
         if(this.empty()){
             // if this is the first insert we should update its fields
+            counter++;
             IAVLNode firstNode = new AVLNode(k, i, EXTERNALNODE, EXTERNALNODE, 0,1);
             this.root = firstNode;
             this.minNode=firstNode;
             this.maxNode=firstNode;
             return 0;
         }
-        IAVLNode whereToInsertNode = treePosition(this.root, k); // comment that O(logn)
+        IAVLNode whereToInsertNode = treePositionMax(this.maxNode, k); // comment that O(logn)
         int keyLastPos=whereToInsertNode.getKey();
         IAVLNode currNode = new AVLNode(k, i, EXTERNALNODE, EXTERNALNODE, 0,1);
         if (keyLastPos == k) // if the node exists in the tree
