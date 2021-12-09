@@ -30,8 +30,10 @@ public class myTester {
 //        int[] random = new int[]{};
         for (int j=1;j<=5;j++){
 //            int num= 1000 * (int)(Math.pow(2,j));
-            int num = 5;
+//            int num = 5;
+            int num = 2*j;
             contarr = new int[num];
+            random = new ArrayList<>();
             for (int i=0;i<contarr.length;i++){
                 int k= contarr.length-i;
                 contarr[i]=k;
@@ -44,13 +46,15 @@ public class myTester {
 //                avlTree.bfs_print();
             }
             System.out.println("reversed array" + avlTree.counter);
+            avlTree.bfs_print();
+
             AVLTree avlTreerand = new AVLTree();
             for (int val : random) {
                 avlTreerand.insertFingerTree(val, "" + val);
-                avlTreerand.bfs_print();
+//                avlTreerand.bfs_print();
             }
             System.out.println("random array" + avlTreerand.counter);
-
+            avlTreerand.bfs_print();
 //            int randNum;
 //            Random rand = new Random();
 //            random = new int[10];

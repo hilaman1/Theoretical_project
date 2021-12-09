@@ -84,7 +84,7 @@ public class AVLTree {
     }
 
     public IAVLNode treePositionMax(IAVLNode maxNode, int k) {
-        this.counter+=1;
+//        this.counter+=1;
         if (k > maxNode.getKey()){
             return maxNode;
         }
@@ -92,22 +92,23 @@ public class AVLTree {
         while (posNode.getParent() != null && posNode.getParent().getKey() > k) {
             posNode = posNode.getParent();
         }
-        if (posNode.getParent() !=null) {
-            if (posNode.getRight().isRealNode()) {
-                posNode = posNode.getRight();
-            }else {
-                return posNode;
-            }
-//            return treePosition(posNode.getLeft(),k);
-        }
-        if (posNode.getLeft().isRealNode()){
-//            if (posNode.getLeft().isLeaf()){
+        return treePosition(posNode, k);
+//        if (posNode.getParent() !=null) {
+//            if (posNode.getRight().isRealNode()) {
+//                posNode = posNode.getRight();
+//            }else {
 //                return posNode;
 //            }
-            return treePosition(posNode.getLeft(),k);
-        }else {
-            return posNode;
-        }
+////            return treePosition(posNode.getLeft(),k);
+//        }
+//        if (posNode.getLeft().isRealNode()){
+////            if (posNode.getLeft().isLeaf()){
+////                return posNode;
+////            }
+//            return treePosition(posNode.getLeft(),k);
+//        }else {
+//            return posNode;
+//        }
 
 //        return posNode;
     }
@@ -227,7 +228,6 @@ public class AVLTree {
                 this.maxNode=currNode;
             }
         }
-
         return rebalanceInsert(currNode);
     }
     public int insertFingerTree(int k, String i) {
