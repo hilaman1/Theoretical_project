@@ -51,6 +51,7 @@ public class AVLTree {
         //needs to be implemented
         IAVLNode posNode = null;
         while (nodeX.isRealNode() && nodeX!=null){
+            this.counter++;
             posNode=nodeX;
             if (k==nodeX.getKey()){
                 return nodeX;
@@ -84,12 +85,13 @@ public class AVLTree {
     }
 
     public IAVLNode treePositionMax(IAVLNode maxNode, int k) {
-//        this.counter+=1;
+        this.counter++;
         if (k > maxNode.getKey()){
             return maxNode;
         }
         IAVLNode posNode = maxNode;
         while (posNode.getParent() != null && posNode.getParent().getKey() > k) {
+            this.counter++;
             posNode = posNode.getParent();
         }
         return treePosition(posNode, k);
@@ -242,6 +244,7 @@ public class AVLTree {
         }
         IAVLNode whereToInsertNode = treePositionMax(this.maxNode, k); // comment that O(logn)
         int keyLastPos=whereToInsertNode.getKey();
+//        counter++;
         IAVLNode currNode = new AVLNode(k, i, EXTERNALNODE, EXTERNALNODE, 0,1);
         if (keyLastPos == k) // if the node exists in the tree
             return -1;

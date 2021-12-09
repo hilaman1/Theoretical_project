@@ -1,9 +1,9 @@
 // Java program for implementation of Insertion Sort
 class InsertionSort {
+    int counter = 0;
     /*Function to sort array using insertion sort*/
     int sort(int arr[])
     {
-        int counter = 0;
         int n = arr.length;
         for (int i = 1; i < n; ++i) {
             int key = arr[i];
@@ -15,7 +15,6 @@ class InsertionSort {
             while (j >= 0 && arr[j] > key) {
                 arr[j + 1] = arr[j];
                 counter++;
-                System.out.println(arr);
                 j = j - 1;
             }
             arr[j + 1] = key;
