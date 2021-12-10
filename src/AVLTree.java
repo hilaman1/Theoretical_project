@@ -3,9 +3,11 @@ import java.util.Arrays;
 import java.util.Queue;//todo-delete this
 
 public class AVLTree {
-    private IAVLNode root;
-    private final IAVLNode EXTERNALNODE = new AVLNode(-1, null, null, null, -1,0);
-    private IAVLNode maxNode; // pointer to the node with the maxNode key
+    public int numOfJoins = 0;
+    public int joinCounter =0;
+    public IAVLNode root;
+    public final IAVLNode EXTERNALNODE = new AVLNode(-1, null, null, null, -1,0);
+    public IAVLNode maxNode; // pointer to the node with the maxNode key
     private IAVLNode minNode;
     public int counter = 0;
 
@@ -888,7 +890,7 @@ public class AVLTree {
     }
 
     /**
-     * public AVLTree[] split(int x)
+     * public AVLTree[] split(int x) todo split
      * <p>
      * splits the tree into 2 trees according to the key x.
      * Returns an array [t1, t2] with two AVL trees. keys(t1) < x < keys(t2).
@@ -932,7 +934,8 @@ public class AVLTree {
                 node.setRight(this.EXTERNALNODE);
                 node.setHeight(0);
                 node.setSize(1);
-                smallerSubT.join(node, treeToJoin);
+                numOfJoins++;
+                joinCounter+=smallerSubT.join(node, treeToJoin);
             } else {
                 node = parent;
                 parent = parent.getParent();
@@ -946,7 +949,8 @@ public class AVLTree {
                 node.setRight(this.EXTERNALNODE);
                 node.setHeight(0);
                 node.setSize(1);
-                biggerSubT.join(node, treeToJoin);
+                numOfJoins++;
+                joinCounter+=biggerSubT.join(node, treeToJoin);
             }
         }
         return new AVLTree[] {smallerSubT,biggerSubT}; // Returns an array [t1, t2] with two AVL trees. keys(t1) < x < keys(t2).
@@ -961,7 +965,8 @@ public class AVLTree {
      * precondition: keys(t) < x < keys() or keys(t) > x > keys(). t/tree might be empty (rank = -1).
      * postcondition: none
      */
-    public int join(IAVLNode x, AVLTree t) {
+    public int join(IAVLNode x, AVLTree t) { // TODO: 10/12/2021 join
+
         // take care of empty trees (both,one)
         if (t.empty()) {
             if (this.empty()) {
@@ -1323,7 +1328,7 @@ public class AVLTree {
      *
      * This class can and MUST be modified (It must implement IAVLNode).
      */
-    public class AVLNode implements IAVLNode{
+    public static class AVLNode implements IAVLNode{
         private int key;
         private String info;
         private IAVLNode parent;

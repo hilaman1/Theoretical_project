@@ -41,7 +41,7 @@ public class myTester {
         int[] contarr = new int[]{};
         ArrayList<Integer> random = new ArrayList<>();
 //        int[] random = new int[]{};
-        for (int j = 1; j <= 10; j++) {
+        for (int j = 1; j <= 5; j++) {
             int num = 1000 * (int) (Math.pow(2, j));
 //            int num = 10000 * j;
 //            int num = 5;
