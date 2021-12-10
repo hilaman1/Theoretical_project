@@ -5,6 +5,8 @@ import java.util.Queue;//todo-delete this
 public class AVLTree {
     public int numOfJoins = 0;
     public int joinCounter =0;
+    public int CurrentjoinCounter =0;
+    public int MAxjoinCounter =0;
     public IAVLNode root;
     public final IAVLNode EXTERNALNODE = new AVLNode(-1, null, null, null, -1,0);
     public IAVLNode maxNode; // pointer to the node with the maxNode key
@@ -935,7 +937,12 @@ public class AVLTree {
                 node.setHeight(0);
                 node.setSize(1);
                 numOfJoins++;
-                joinCounter+=smallerSubT.join(node, treeToJoin);
+//                joinCounter+=smallerSubT.join(node, treeToJoin);
+                CurrentjoinCounter=smallerSubT.join(node, treeToJoin);
+                if (MAxjoinCounter < CurrentjoinCounter){
+                    MAxjoinCounter = CurrentjoinCounter;
+                }
+                CurrentjoinCounter = 0 ;
             } else {
                 node = parent;
                 parent = parent.getParent();
@@ -950,7 +957,12 @@ public class AVLTree {
                 node.setHeight(0);
                 node.setSize(1);
                 numOfJoins++;
-                joinCounter+=biggerSubT.join(node, treeToJoin);
+//                joinCounter+=biggerSubT.join(node, treeToJoin);
+                CurrentjoinCounter=biggerSubT.join(node, treeToJoin);
+                if (MAxjoinCounter < CurrentjoinCounter){
+                    MAxjoinCounter = CurrentjoinCounter;
+                }
+                CurrentjoinCounter = 0 ;
             }
         }
         return new AVLTree[] {smallerSubT,biggerSubT}; // Returns an array [t1, t2] with two AVL trees. keys(t1) < x < keys(t2).
@@ -1075,7 +1087,7 @@ public class AVLTree {
                 currNodeInHigher.setParent(x);
                 x.setLeft(currNodeInHigher);
                 x.setRight(rootLower);
-                if (currNodeInHigher.getParent()!=null) {
+                if (parentC!=null) {
                     parentC.setRight(x);
                     x.setParent(parentC);
                 }else {
@@ -1089,7 +1101,7 @@ public class AVLTree {
                 currNodeInHigher.setParent(x);
                 x.setLeft(rootLower);
                 x.setRight(currNodeInHigher);
-                if (currNodeInHigher.getParent()!=null) {
+                if (parentC!=null) {
                     parentC.setLeft(x);
                     x.setParent(parentC);
                 }else {
