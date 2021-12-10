@@ -966,7 +966,10 @@ public class AVLTree {
      * postcondition: none
      */
     public int join(IAVLNode x, AVLTree t) { // TODO: 10/12/2021 join
-
+//        if (this.root == null && t.root == null) {
+//            this.insert(x.getKey(), x.getValue());
+//            return 1;
+//        }
         // take care of empty trees (both,one)
         if (t.empty()) {
             if (this.empty()) {
@@ -1067,18 +1070,32 @@ public class AVLTree {
         IAVLNode parentC=currNodeInHigher.getParent();
         switch (side) {
             case 'R':
+//                IAVLNode parentC=currNodeInHigher.getParent();
                 // if we moved right through the higher tree
                 currNodeInHigher.setParent(x);
                 x.setLeft(currNodeInHigher);
                 x.setRight(rootLower);
-                parentC.setRight(x);
+                if (currNodeInHigher.getParent()!=null) {
+                    parentC.setRight(x);
+                    x.setParent(parentC);
+                }else {
+                    x.setParent(null);
+                }
+                currNodeInHigher.setParent(x);
                 break;
             case 'L':
+//                IAVLNode parentC = currNodeInHigher.getParent();
                 // if we moved left through the higher tree
                 currNodeInHigher.setParent(x);
                 x.setLeft(rootLower);
                 x.setRight(currNodeInHigher);
-                parentC.setLeft(x);
+                if (currNodeInHigher.getParent()!=null) {
+                    parentC.setLeft(x);
+                    x.setParent(parentC);
+                }else {
+                    x.setParent(null);
+                }
+                currNodeInHigher.setParent(x);
                 break;
             default:
                 break;
