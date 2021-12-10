@@ -966,10 +966,10 @@ public class AVLTree {
      * postcondition: none
      */
     public int join(IAVLNode x, AVLTree t) { // TODO: 10/12/2021 join
-//        if (this.root == null && t.root == null) {
-//            this.insert(x.getKey(), x.getValue());
-//            return 1;
-//        }
+        if (this.root == null && t.root == null) {
+            this.insert(x.getKey(), x.getValue());
+            return 1;
+        }
         // take care of empty trees (both,one)
         if (t.empty()) {
             if (this.empty()) {
